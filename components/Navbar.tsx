@@ -18,11 +18,12 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-10 text-lg">
+          <div className="hidden md:flex items-center gap-8 text-lg">
             <Link href="/" className="hover:text-pink-400 transition-colors">Home</Link>
-            <Link href="/products?category=Men" className="hover:text-white transition-colors font-medium">VantaBlack</Link>
-            <Link href="/products?category=Women" className="hover:text-pink-400 transition-colors font-medium">VantaRozze</Link>
-            <Link href="/products" className="hover:text-white transition-colors">Shop All</Link>
+            <Link href="/products?category=Men" className="hover:text-white transition-colors">VantaBlack</Link>
+            <Link href="/products?category=Women" className="hover:text-pink-400 transition-colors">VantaRozze</Link>
+            <Link href="/products?category=Others" className="hover:text-emerald-400 transition-colors">Others</Link>
+            <Link href="/products" className="hover:text-white transition-colors font-medium">Shop All</Link>
           </div>
 
           {/* Right side */}
@@ -47,6 +48,7 @@ export default function Navbar() {
               <Link href="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
               <Link href="/products?category=Men" onClick={() => setIsMenuOpen(false)}>VantaBlack (Men)</Link>
               <Link href="/products?category=Women" onClick={() => setIsMenuOpen(false)}>VantaRozze (Women)</Link>
+              <Link href="/products?category=Others" onClick={() => setIsMenuOpen(false)}>Others</Link>
               <Link href="/products" onClick={() => setIsMenuOpen(false)}>Shop All</Link>
             </div>
           </div>
