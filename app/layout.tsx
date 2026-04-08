@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -5,6 +6,17 @@ import Navbar from "@/components/Navbar";
 export const metadata: Metadata = {
   title: "Vanta | Premium Fashion",
   description: "VantaBlack for Men • VantaRozze for Women",
+  
+  icons: {
+    icon: "/vanta.png",
+    apple: "/vanta.png",
+    shortcut: "/vanta.png",
+  },
+  
+  // Optional: Social sharing image (same logo or a bigger banner)
+  openGraph: {
+    images: ["/vanta.png"],
+  },
 };
 
 export default function RootLayout({
