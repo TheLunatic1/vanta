@@ -8,14 +8,14 @@ export const metadata: Metadata = {
   description: "VantaBlack for Men • VantaRozze for Women",
   
   icons: {
-    icon: "/vanta.png",
-    apple: "/vanta.png",
-    shortcut: "/vanta.png",
+    icon: "https://i.imgur.com/EuhXZpP.png",
+    apple: "https://i.imgur.com/EuhXZpP.png",
+    shortcut: "https://i.imgur.com/EuhXZpP.png",
   },
   
   // Optional: Social sharing image (same logo or a bigger banner)
   openGraph: {
-    images: ["/vanta.png"],
+    images: ["https://i.imgur.com/EuhXZpP.png"],
   },
 };
 
