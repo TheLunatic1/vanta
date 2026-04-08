@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { CartProvider } from "@/components/CartContext";
 
 export const metadata: Metadata = {
   title: "Vanta | Premium Fashion",
@@ -27,8 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-base-100 text-base-content">
-        <Navbar />
-        <main>{children}</main>
+        <CartProvider>
+          <Navbar />
+          <main>{children}</main>
+        </CartProvider>
       </body>
     </html>
   );

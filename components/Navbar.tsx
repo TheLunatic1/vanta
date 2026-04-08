@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { useCart } from './CartContext';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cart } = useCart();
 
   return (
     <nav className="bg-black text-white sticky top-0 z-50 shadow-xl">
@@ -28,8 +30,13 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-6">
-            <Link href="/cart" className="flex items-center gap-2 hover:text-pink-400 transition-colors">
+            <Link href="/cart" className="relative flex items-center gap-2 hover:text-pink-400 transition-colors">
               <ShoppingCart size={26} />
+              {cart.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium">
+                  {cart.length}
+                </span>
+              )}
             </Link>
 
             <button 

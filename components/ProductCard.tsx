@@ -17,9 +17,10 @@ type Product = {
 };
 
 export default function ProductCard({ product }: { product: Product }) {
+  // Safe image URL with fallback
   const imageUrl = product.images && product.images.length > 0 
     ? product.images[0] 
-    : 'https://placehold.co/400x400?text=No+Image';
+    : 'https://placehold.co/600x600/png?text=No+Image+Available';
 
   const handleWhatsApp = () => {
     const message = `Hi! I want to order this from Vanta:\n\n` +
@@ -29,7 +30,7 @@ export default function ProductCard({ product }: { product: Product }) {
       `Product ID: ${product.productID}\n\n` +
       `Please confirm availability. Thank you!`;
 
-    const whatsappUrl = `https://wa.me/8801712345678?text=${encodeURIComponent(message)}`; // Change number later
+    const whatsappUrl = `https://wa.me/8801712345678?text=${encodeURIComponent(message)}`; // Change to client's number later
     window.open(whatsappUrl, '_blank');
   };
 
@@ -42,6 +43,10 @@ export default function ProductCard({ product }: { product: Product }) {
           width={400}
           height={400}
           className="w-full h-64 object-cover group-hover:scale-105 transition-transform"
+          onError={(e) => {
+            // Fallback if image fails to load
+            (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/png?text=Image+Not+Found';
+          }}
         />
         {product.salePrice && (
           <div className="absolute top-4 right-4 badge badge-error text-white">SALE</div>
