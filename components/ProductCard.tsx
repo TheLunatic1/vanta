@@ -3,7 +3,6 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
 
 type Product = {
   productID: string;
@@ -17,22 +16,9 @@ type Product = {
 };
 
 export default function ProductCard({ product }: { product: Product }) {
-  // Safe image URL with fallback
   const imageUrl = product.images && product.images.length > 0 
     ? product.images[0] 
     : 'https://placehold.co/600x600/png?text=No+Image+Available';
-
-  const handleWhatsApp = () => {
-    const message = `Hi! I want to order this from Vanta:\n\n` +
-      `*${product.title}*\n` +
-      `Price: ৳${product.salePrice || product.price}\n` +
-      `Category: ${product.category}\n` +
-      `Product ID: ${product.productID}\n\n` +
-      `Please confirm availability. Thank you!`;
-
-    const whatsappUrl = `https://wa.me/8801712345678?text=${encodeURIComponent(message)}`; // Change to client's number later
-    window.open(whatsappUrl, '_blank');
-  };
 
   return (
     <div className="card bg-base-100 border border-base-300 hover:border-primary transition-all group">
@@ -44,7 +30,6 @@ export default function ProductCard({ product }: { product: Product }) {
           height={400}
           className="w-full h-64 object-cover group-hover:scale-105 transition-transform"
           onError={(e) => {
-            // Fallback if image fails to load
             (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/png?text=Image+Not+Found';
           }}
         />
@@ -68,20 +53,13 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        <div className="card-actions mt-6 flex gap-3">
+        <div className="card-actions mt-6">
           <Link
             href={`/product/${product.productID}`}
-            className="flex-1 btn btn-outline btn-sm"
+            className="btn btn-primary btn-block"
           >
             View Details
           </Link>
-          <button
-            onClick={handleWhatsApp}
-            className="flex-1 btn btn-primary btn-sm text-white"
-          >
-            <ShoppingCart size={18} />
-            Order on WhatsApp
-          </button>
         </div>
       </div>
     </div>

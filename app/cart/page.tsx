@@ -25,7 +25,7 @@ export default function CartPage() {
     message += `*Total Amount: ৳${getTotalPrice()}*\n\n`;
     message += `Please confirm the order and delivery details. Thank you! 🙏`;
 
-    const whatsappUrl = `https://wa.me/8801712345678?text=${encodeURIComponent(message)}`; // ← Change this number to client's WhatsApp
+    const whatsappUrl = `https://wa.me/8801612224639?text=${encodeURIComponent(message)}`; // ← Change this number to client's WhatsApp
     window.open(whatsappUrl, '_blank');
   };
 

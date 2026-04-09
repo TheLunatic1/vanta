@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { CartProvider } from "@/components/CartContext";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Vanta | Premium Fashion",
@@ -31,6 +32,7 @@ export default function RootLayout({
         <CartProvider>
           <Navbar />
           <main>{children}</main>
+          <Footer />
         </CartProvider>
       </body>
     </html>
