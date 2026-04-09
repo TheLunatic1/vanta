@@ -34,7 +34,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-lg mb-6">Support</h4>
             <div className="space-y-3 text-zinc-400">
-              <a href="https://wa.me/8801712345678" target="_blank" className="block hover:text-white transition-colors">Contact via WhatsApp</a>
+              <a href="https://wa.me/8801612224639" target="_blank" className="block hover:text-white transition-colors">Contact via WhatsApp</a>
               <Link href="/products" className="block hover:text-white transition-colors">Track Order</Link>
               <a href="#" className="block hover:text-white transition-colors">Shipping Policy</a>
               <a href="#" className="block hover:text-white transition-colors">Return Policy</a>
@@ -47,7 +47,7 @@ export default function Footer() {
             <div className="flex gap-4">
               {/* Facebook */}
               <a 
-                href="https://facebook.com/VantaBlack" 
+                href="https://www.facebook.com/profile.php?id=61577425366782" 
                 target="_blank"
                 className="w-11 h-11 bg-zinc-900 hover:bg-zinc-800 rounded-2xl flex items-center justify-center transition-colors"
                 dangerouslySetInnerHTML={{
@@ -67,7 +67,7 @@ export default function Footer() {
 
               {/* WhatsApp */}
               <a 
-                href="https://wa.me/8801712345678" 
+                href="https://wa.me/8801612224639" 
                 target="_blank"
                 className="w-11 h-11 bg-emerald-600 hover:bg-emerald-700 rounded-2xl flex items-center justify-center transition-colors"
                 dangerouslySetInnerHTML={{
@@ -77,7 +77,7 @@ export default function Footer() {
             </div>
             
             <div className="mt-8 text-sm text-zinc-500 flex items-center gap-1">
-              Made with ❤️ for your business
+              Made for business
             </div>
           </div>
         </div>
