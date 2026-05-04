@@ -12,6 +12,7 @@ type Product = {
   salePrice?: number;
   images: string[];
   category: string;
+  subcategory?: string;     // ← New
   variants: string;
 };
 
@@ -40,6 +41,12 @@ export default function ProductCard({ product }: { product: Product }) {
 
       <div className="card-body p-5">
         <h3 className="card-title text-lg font-semibold line-clamp-2">{product.title}</h3>
+        
+        {/* Show Subcategory */}
+        {product.subcategory && (
+          <p className="text-sm text-primary font-medium">{product.subcategory}</p>
+        )}
+
         <p className="text-sm text-base-content/70 line-clamp-2">{product.description}</p>
 
         <div className="flex items-baseline gap-3 mt-3">

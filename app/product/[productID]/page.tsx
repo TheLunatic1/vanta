@@ -16,6 +16,7 @@ type Product = {
   salePrice?: number;
   images: string[];
   category: string;
+  subcategory?: string;
   variants: string;
 };
 
@@ -68,34 +69,30 @@ export default function ProductDetail() {
     if (!product) return;
 
     const variantText = selectedVariant ? `Variant: ${selectedVariant}` : '';
+    const subcategoryText = product.subcategory ? `Subcategory: ${product.subcategory}` : '';
 
     const message = `Hi! I want to buy this from Vanta:\n\n` +
       `*${product.title}*\n` +
+      `${subcategoryText ? subcategoryText + '\n' : ''}` +
       `${variantText ? variantText + '\n' : ''}` +
       `Price: ৳${product.salePrice || product.price}\n` +
       `Category: ${product.category}\n` +
       `Product ID: ${product.productID}\n\n` +
       `Please confirm stock and delivery. Thank you!`;
 
-    const whatsappUrl = `https://wa.me/8801612224639?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/8801712345678?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
+    return <div className="min-h-screen flex items-center justify-center"><span className="loading loading-spinner loading-lg"></span></div>;
   }
 
   if (!product) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-center">
         <h2 className="text-3xl font-bold mb-4">Product Not Found</h2>
-        <Link href="/products" className="btn btn-primary">
-          ← Back to Shop
-        </Link>
+        <Link href="/products" className="btn btn-primary">← Back to Shop</Link>
       </div>
     );
   }
@@ -111,21 +108,20 @@ export default function ProductDetail() {
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* === IMAGE GALLERY - Improved === */}
+        {/* === IMAGE GALLERY - Full Image Visible === */}
         <div>
-          <div className="relative aspect-square bg-zinc-900 rounded-3xl overflow-hidden mb-6 shadow-2xl">
+          <div className="relative aspect-square bg-zinc-900 rounded-3xl overflow-hidden mb-6 border border-zinc-800">
             <Image
               src={product.images[currentImageIndex] || 'https://placehold.co/600x600/png?text=No+Image+Available'}
               alt={product.title}
               fill
-              className="object-cover"
+              className="object-contain p-4"   // ← Changed to object-contain + padding
               onError={(e) => {
                 (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/png?text=Image+Not+Found';
               }}
             />
           </div>
 
-          {/* Thumbnails - Better responsive */}
           {product.images.length > 1 && (
             <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
               {product.images.map((img, index) => (
@@ -133,17 +129,15 @@ export default function ProductDetail() {
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
                   className={`aspect-square rounded-2xl overflow-hidden border-2 transition-all ${
-                    index === currentImageIndex 
-                      ? 'border-primary scale-105' 
-                      : 'border-transparent hover:border-base-300'
+                    index === currentImageIndex ? 'border-primary scale-105' : 'border-transparent hover:border-base-300'
                   }`}
                 >
-                  <Image
-                    src={img}
-                    alt={`Thumbnail ${index}`}
-                    width={120}
-                    height={120}
-                    className="object-cover w-full h-full"
+                  <Image 
+                    src={img} 
+                    alt={`Thumb ${index}`} 
+                    width={120} 
+                    height={120} 
+                    className="object-cover w-full h-full" 
                   />
                 </button>
               ))}
@@ -151,11 +145,18 @@ export default function ProductDetail() {
           )}
         </div>
 
-        {/* === PRODUCT INFO === */}
+        {/* Product Info */}
         <div className="space-y-8">
           <div>
-            <div className="badge badge-lg badge-neutral mb-3">{product.category}</div>
-            <h1 className="text-4xl font-bold leading-tight">{product.title}</h1>
+            <div className="flex items-center gap-2">
+              <div className="badge badge-lg badge-neutral">{product.category}</div>
+              {product.subcategory && (
+                <div className="badge badge-lg bg-zinc-700 text-white border-none">
+                  {product.subcategory}
+                </div>
+              )}
+            </div>
+            <h1 className="text-4xl font-bold leading-tight mt-3">{product.title}</h1>
           </div>
 
           <div className="flex items-baseline gap-4">
@@ -174,7 +175,6 @@ export default function ProductDetail() {
             <p className="text-base-content/80 leading-relaxed whitespace-pre-line">{product.description}</p>
           </div>
 
-          {/* Selectable Variants */}
           {variantsList.length > 0 && (
             <div>
               <h3 className="font-semibold mb-3">Available Variants</h3>
@@ -196,7 +196,6 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="pt-8 flex flex-col gap-4">
             <button
               onClick={handleAddToCart}
