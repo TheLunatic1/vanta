@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { ArrowLeft, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
@@ -22,18 +22,16 @@ type Product = {
 
 export default function ProductDetail() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const productID = params.productID as string;
+  const categoryFromUrl = searchParams.get('category') || ''; // Get category from URL if passed
+
   const { addToCart } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<string>('');
-
-  // Magnifier
-  const [isHovering, setIsHovering] = useState(false);
-  const [lensPosition, setLensPosition] = useState({ x: 0, y: 0 });
-  const [zoomedPosition, setZoomedPosition] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -57,22 +55,6 @@ export default function ProductDetail() {
     if (productID) fetchProduct();
   }, [productID]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const lensSize = 90;
-    const posX = Math.max(lensSize/2, Math.min(x, rect.width - lensSize/2));
-    const posY = Math.max(lensSize/2, Math.min(y, rect.height - lensSize/2));
-
-    setLensPosition({ x: posX, y: posY });
-
-    const zoomX = (x / rect.width) * 100;
-    const zoomY = (y / rect.height) * 100;
-    setZoomedPosition({ x: zoomX, y: zoomY });
-  };
-
   const handleAddToCart = () => {
     if (!product) return;
     const cartItem = {
@@ -94,46 +76,41 @@ export default function ProductDetail() {
 
   const variantsList = product.variants ? product.variants.split(',').map(v => v.trim()).filter(Boolean) : [];
 
+  // Smart Back Link
+  const backHref = categoryFromUrl 
+    ? `/products?category=${categoryFromUrl}` 
+    : '/products';
+
+  const backText = categoryFromUrl 
+    ? (categoryFromUrl === 'Men' ? 'Back to VantaBlack' 
+      : categoryFromUrl === 'Women' ? 'Back to VantaRozze' 
+      : 'Back to Others')
+    : 'Back to All Products';
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-      <Link href="/products" className="flex items-center gap-2 mb-8 text-base-content/70 hover:text-white">
-        <ArrowLeft size={20} /> Back to Shop
+      <Link 
+        href={backHref}
+        className="flex items-center gap-2 mb-8 text-base-content/70 hover:text-white"
+      >
+        <ArrowLeft size={20} /> {backText}
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 relative">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Image Section */}
         <div>
-          <div 
-            className="relative aspect-square bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 cursor-crosshair"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            onMouseMove={handleMouseMove}
-          >
+          <div className="relative aspect-square bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 group">
             <Image
               src={product.images[currentImageIndex] || 'https://placehold.co/600x600/png?text=No+Image+Available'}
               alt={product.title}
               fill
-              className="object-contain p-8"
+              className="object-contain p-8 transition-transform duration-500 group-hover:scale-110"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/png?text=Image+Not+Found';
               }}
             />
-
-            {/* Lens */}
-            {isHovering && (
-              <div 
-                className="absolute border-2 border-white/70 pointer-events-none rounded-md"
-                style={{
-                  width: '90px',
-                  height: '90px',
-                  left: `${lensPosition.x - 45}px`,
-                  top: `${lensPosition.y - 45}px`,
-                }}
-              />
-            )}
           </div>
 
-          {/* Thumbnails */}
           {product.images.length > 1 && (
             <div className="grid grid-cols-5 gap-3 mt-6">
               {product.images.map((img, index) => (
@@ -151,24 +128,8 @@ export default function ProductDetail() {
           )}
         </div>
 
-        {/* Product Info + Floating Zoomed View */}
-        <div className="space-y-8 relative">
-          {/* Floating Zoomed View - 30% Larger & 50% More Zoom */}
-          {isHovering && (
-            <div className="absolute -right-12 top-12 hidden xl:block w-96 h-96 border-4 border-white/80 bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl z-50">
-              <Image
-                src={product.images[currentImageIndex] || 'https://placehold.co/600x600/png?text=No+Image+Available'}
-                alt={product.title}
-                fill
-                className="object-contain"
-                style={{
-                  transform: `scale(4.2)`,           // 50% more zoom
-                  transformOrigin: `${zoomedPosition.x}% ${zoomedPosition.y}%`
-                }}
-              />
-            </div>
-          )}
-
+        {/* Product Info */}
+        <div className="space-y-8">
           <div className="flex gap-2">
             <div className="badge badge-lg badge-neutral">{product.category}</div>
             {product.subcategory && (

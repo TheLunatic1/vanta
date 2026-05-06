@@ -3,6 +3,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { ShoppingCart } from 'lucide-react';
+import { useCart } from './CartContext';
 
 type Product = {
   productID: string;
@@ -17,29 +19,32 @@ type Product = {
 };
 
 export default function ProductCard({ product }: { product: Product }) {
-  const imageUrl = product.images && product.images.length > 0 
-    ? product.images[0] 
-    : 'https://placehold.co/600x600/png?text=No+Image+Available';
+  const { addToCart } = useCart();
 
+  const imageUrl = product.images?.[0] || 'https://placehold.co/600x600/png?text=No+Image+Available';
   const hasSale = product.salePrice && product.salePrice > 0 && product.salePrice < product.price;
+  const discountPercent = hasSale 
+    ? Math.round(((product.price - product.salePrice!) / product.price) * 100) 
+    : 0;
 
   return (
-    <div className="card bg-base-100 border border-base-300 hover:border-primary transition-all group">
+    <div className="card bg-base-100 border border-base-300 hover:border-primary transition-all group relative overflow-hidden">
       <figure className="relative">
         <Image
           src={imageUrl}
           alt={product.title}
           width={400}
           height={400}
-          className="w-full h-64 object-cover group-hover:scale-105 transition-transform"
+          className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/png?text=Image+Not+Found';
           }}
         />
-        
-        {/* SALE Badge - Only show if there is a real sale */}
+
         {hasSale && (
-          <div className="absolute top-4 right-4 badge badge-error text-white">SALE</div>
+          <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+            -{discountPercent}% OFF
+          </div>
         )}
       </figure>
 
@@ -50,7 +55,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <p className="text-sm text-primary font-medium">{product.subcategory}</p>
         )}
 
-        <p className="text-sm text-base-content/70 line-clamp-2">{product.description}</p>
+        <p className="text-sm text-base-content/70 line-clamp-2 min-h-10.5">{product.description}</p>
 
         <div className="flex items-baseline gap-3 mt-3">
           {hasSale ? (
@@ -63,13 +68,21 @@ export default function ProductCard({ product }: { product: Product }) {
           )}
         </div>
 
-        <div className="card-actions mt-6">
+        <div className="card-actions mt-6 flex gap-3">
           <Link
-            href={`/product/${product.productID}`}
-            className="btn btn-primary btn-block"
+            href={`/product/${product.productID}?category=${product.category}`}
+            className="flex-1 btn btn-outline btn-sm"
           >
             View Details
           </Link>
+          
+          <button
+            onClick={() => addToCart(product)}
+            className="flex-1 btn btn-primary btn-sm text-white"
+          >
+            <ShoppingCart size={18} />
+            Add
+          </button>
         </div>
       </div>
     </div>
