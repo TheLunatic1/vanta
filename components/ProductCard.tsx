@@ -12,7 +12,7 @@ type Product = {
   salePrice?: number;
   images: string[];
   category: string;
-  subcategory?: string;     // ← New
+  subcategory?: string;
   variants: string;
 };
 
@@ -20,6 +20,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const imageUrl = product.images && product.images.length > 0 
     ? product.images[0] 
     : 'https://placehold.co/600x600/png?text=No+Image+Available';
+
+  const hasSale = product.salePrice && product.salePrice > 0 && product.salePrice < product.price;
 
   return (
     <div className="card bg-base-100 border border-base-300 hover:border-primary transition-all group">
@@ -34,7 +36,9 @@ export default function ProductCard({ product }: { product: Product }) {
             (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/png?text=Image+Not+Found';
           }}
         />
-        {product.salePrice && (
+        
+        {/* SALE Badge - Only show if there is a real sale */}
+        {hasSale && (
           <div className="absolute top-4 right-4 badge badge-error text-white">SALE</div>
         )}
       </figure>
@@ -42,7 +46,6 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="card-body p-5">
         <h3 className="card-title text-lg font-semibold line-clamp-2">{product.title}</h3>
         
-        {/* Show Subcategory */}
         {product.subcategory && (
           <p className="text-sm text-primary font-medium">{product.subcategory}</p>
         )}
@@ -50,7 +53,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <p className="text-sm text-base-content/70 line-clamp-2">{product.description}</p>
 
         <div className="flex items-baseline gap-3 mt-3">
-          {product.salePrice ? (
+          {hasSale ? (
             <>
               <span className="text-2xl font-bold">৳{product.salePrice}</span>
               <span className="text-base-content/50 line-through">৳{product.price}</span>

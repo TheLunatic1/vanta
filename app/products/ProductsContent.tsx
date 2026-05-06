@@ -14,6 +14,7 @@ type Product = {
   salePrice?: number;
   images: string[];
   category: string;
+  subcategory?: string;
   variants: string;
 };
 
@@ -51,7 +52,8 @@ export default function ProductsContent() {
 
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchTerm.toLowerCase())
+    product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (product.subcategory && product.subcategory.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -72,7 +74,7 @@ export default function ProductsContent() {
         <div className="relative w-full md:w-96">
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder="Search products or subcategory..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="input input-bordered w-full pl-12"
