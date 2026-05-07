@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-no-undef */
-// app/product/[productID]/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';

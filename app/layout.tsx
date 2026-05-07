@@ -1,4 +1,3 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -10,14 +9,14 @@ export const metadata: Metadata = {
   description: "VantaBlack for Men • VantaRozze for Women",
   
   icons: {
-    icon: "https://i.imgur.com/EuhXZpP.png",
-    apple: "https://i.imgur.com/EuhXZpP.png",
-    shortcut: "https://i.imgur.com/EuhXZpP.png",
+    icon: "https://i.imgur.com/UpPXy3d.jpeg",
+    apple: "https://i.imgur.com/UpPXy3d.jpeg",
+    shortcut: "https://i.imgur.com/UpPXy3d.jpeg",
   },
   
   // Optional: Social sharing image (same logo or a bigger banner)
   openGraph: {
-    images: ["https://i.imgur.com/EuhXZpP.png"],
+    images: ["https://i.imgur.com/UpPXy3d.jpeg"],
   },
 };
 

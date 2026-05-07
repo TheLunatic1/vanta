@@ -8,7 +8,7 @@ export default function Home() {
       <div 
         className="relative min-h-[90vh] flex items-center justify-center px-4 py-12 overflow-hidden"
         style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.8)), url('https://res.cloudinary.com/didceurwh/image/upload/v1778049776/BG_wwsfkm.png')`,
+          backgroundImage: `url('https://i.imgur.com/zfEhvrR.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -30,7 +30,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2">
               <ShieldCheck size={20} className="text-emerald-400" />
-              30 Days Easy Return
+              15 Days Easy Return
             </div>
           </div>
 

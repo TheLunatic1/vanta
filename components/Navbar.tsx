@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import Link from 'next/link';
@@ -15,7 +16,13 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-white rounded-2xl flex items-center justify-center text-black font-bold text-3xl">V</div>
+            <div className="w-9 h-9 bg-black rounded-2xl flex items-center justify-center border border-white/30 overflow-hidden">
+              <img 
+                src="https://i.imgur.com/UpPXy3d.jpeg" 
+                alt="Vanta Logo" 
+                className="w-8 h-8 object-contain"
+              />
+            </div>
             <span className="font-black text-3xl tracking-tighter">VANTA</span>
           </Link>
 
