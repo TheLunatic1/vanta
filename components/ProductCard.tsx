@@ -1,3 +1,4 @@
+// components/ProductCard.tsx
 'use client';
 
 import Image from 'next/image';
@@ -14,7 +15,9 @@ type Product = {
   images: string[];
   category: string;
   subcategory?: string;
-  variants: string;
+  stock?: number;
+  colors?: string;
+  sizes?: string;
 };
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -25,6 +28,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const discountPercent = hasSale 
     ? Math.round(((product.price - product.salePrice!) / product.price) * 100) 
     : 0;
+
+  const isOutOfStock = product.stock !== undefined && product.stock <= 0;
 
   return (
     <div className="card bg-base-100 border border-base-300 hover:border-primary transition-all group relative overflow-hidden">
@@ -40,9 +45,15 @@ export default function ProductCard({ product }: { product: Product }) {
           }}
         />
 
-        {hasSale && (
-          <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+        {hasSale && !isOutOfStock && (
+          <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
             -{discountPercent}% OFF
+          </div>
+        )}
+
+        {isOutOfStock && (
+          <div className="absolute top-4 right-4 bg-gray-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+            OUT OF STOCK
           </div>
         )}
       </figure>
@@ -75,13 +86,15 @@ export default function ProductCard({ product }: { product: Product }) {
             View Details
           </Link>
           
-          <button
-            onClick={() => addToCart(product)}
-            className="flex-1 btn btn-primary btn-sm text-white"
-          >
-            <ShoppingCart size={18} />
-            Add
-          </button>
+          {!isOutOfStock && (
+            <button
+              onClick={() => addToCart(product)}
+              className="flex-1 btn btn-primary btn-sm text-white"
+            >
+              <ShoppingCart size={18} />
+              Add
+            </button>
+          )}
         </div>
       </div>
     </div>

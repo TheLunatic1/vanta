@@ -1,10 +1,11 @@
+/* eslint-disable react/jsx-no-undef */
 // app/product/[productID]/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
-import { ArrowLeft, ShoppingCart, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MessageCircle, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/components/CartContext';
 
@@ -19,6 +20,7 @@ type Product = {
   subcategory?: string;
   colors?: string;
   sizes?: string;
+  stock?: number;
   variants: string;
 };
 
@@ -58,8 +60,10 @@ export default function ProductDetail() {
     if (productID) fetchProduct();
   }, [productID]);
 
+  const isOutOfStock = product?.stock !== undefined && product.stock <= 0;
+
   const handleAddToCart = () => {
-    if (!product) return;
+    if (!product || isOutOfStock) return;
     const variantName = [selectedColor, selectedSize].filter(Boolean).join(' - ');
     const cartItem = {
       ...product,
@@ -73,25 +77,34 @@ export default function ProductDetail() {
   const handleWhatsApp = () => {
     if (!product) return;
 
-    const colorText = selectedColor ? `Color: ${selectedColor}` : '';
-    const sizeText = selectedSize ? `Size: ${selectedSize}` : '';
-    const price = product.salePrice && product.salePrice < product.price 
-      ? product.salePrice 
-      : product.price;
+    let message = '';
 
-    const message = `Hello Vanta!\n\n` +
-      `I would like to order:\n\n` +
-      `${product.title}\n` +
-      `${product.subcategory ? `Category: ${product.subcategory}\n` : ''}` +
-      `${colorText}\n` +
-      `${sizeText}\n` +
-      `Price: ৳${price}\n` +
-      `Product ID: ${product.productID}\n\n` +
-      `Please confirm availability and delivery charge. Thank you!`;
+    if (isOutOfStock) {
+      message = `Hello Vanta!\n\n` +
+        `I saw the product "${product.title}" is currently out of stock.\n` +
+        `When will this come back in stock?\n\n` +
+        `Product ID: ${product.productID}\n` +
+        `Please let me know. Thank you!`;
+    } else {
+      const colorText = selectedColor ? `Color: ${selectedColor}` : '';
+      const sizeText = selectedSize ? `Size: ${selectedSize}` : '';
+      const price = product.salePrice && product.salePrice < product.price 
+        ? product.salePrice 
+        : product.price;
 
-    const phoneNumber = "8801712345678"; // ← Change this number if needed
+      message = `Hello Vanta!\n\n` +
+        `I would like to order:\n\n` +
+        `${product.title}\n` +
+        `${product.subcategory ? `Category: ${product.subcategory}\n` : ''}` +
+        `${colorText}\n` +
+        `${sizeText}\n` +
+        `Price: ৳${price}\n` +
+        `Product ID: ${product.productID}\n\n` +
+        `Please confirm availability and delivery charge. Thank you!`;
+    }
+
+    const phoneNumber = "8801712345678"; // Change this if needed
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    
     window.open(whatsappUrl, '_blank');
   };
 
@@ -108,7 +121,7 @@ export default function ProductDetail() {
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Image with Magnifier */}
+        {/* Image + Magnifier */}
         <div>
           <div 
             className="relative aspect-square bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-800 cursor-crosshair"
@@ -187,6 +200,13 @@ export default function ProductDetail() {
 
           <h1 className="text-4xl font-bold leading-tight">{product.title}</h1>
 
+          {/* Stock Status */}
+          {isOutOfStock ? (
+            <div className="badge badge-lg badge-error text-white">OUT OF STOCK</div>
+          ) : product.stock !== undefined && (
+            <div className="text-sm text-emerald-500 font-medium">✅ In Stock ({product.stock} available)</div>
+          )}
+
           <div className="flex items-baseline gap-4">
             {product.salePrice && product.salePrice < product.price ? (
               <>
@@ -203,6 +223,7 @@ export default function ProductDetail() {
             <p className="text-base-content/80 leading-relaxed">{product.description}</p>
           </div>
 
+          {/* Colors & Sizes */}
           {colorsList.length > 0 && (
             <div>
               <h3 className="font-semibold mb-3">Color</h3>
@@ -242,20 +263,22 @@ export default function ProductDetail() {
           )}
 
           <div className="pt-8 flex flex-col gap-4">
-            <button
-              onClick={handleAddToCart}
-              className="btn btn-primary btn-block text-lg h-16"
-              disabled={(colorsList.length > 0 && !selectedColor) || (sizesList.length > 0 && !selectedSize)}
-            >
-              <ShoppingCart size={26} /> Add to Cart
-            </button>
+            {!isOutOfStock && (
+              <button
+                onClick={handleAddToCart}
+                className="btn btn-primary btn-block text-lg h-16"
+                disabled={(colorsList.length > 0 && !selectedColor) || (sizesList.length > 0 && !selectedSize)}
+              >
+                <ShoppingCart size={26} /> Add to Cart
+              </button>
+            )}
 
             <button
               onClick={handleWhatsApp}
               className="btn btn-success btn-block text-lg h-16 flex items-center justify-center gap-2 text-white"
             >
               <MessageCircle size={26} />
-              Order on WhatsApp
+              {isOutOfStock ? "Ask When Back in Stock" : "Order on WhatsApp"}
             </button>
           </div>
         </div>
