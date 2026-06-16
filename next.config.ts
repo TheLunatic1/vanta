@@ -4,12 +4,16 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactCompiler: true,
 
-  // ✅ Allow Cloudinary images (your Google Sheet images)
+  // ✅ Allow any image link (including Cloudinary)
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "res.cloudinary.com",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },
