@@ -57,7 +57,12 @@ export default function ProductsContent() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+    <div className="relative min-h-screen">
+      {/* Background Orbs */}
+      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-pink-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
         <h1 className="text-4xl font-bold">
           {categoryFilter 
@@ -102,6 +107,7 @@ export default function ProductsContent() {
           No products found matching your search.
         </div>
       )}
+      </div>
     </div>
   );
 }

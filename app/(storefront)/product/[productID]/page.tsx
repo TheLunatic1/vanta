@@ -20,7 +20,10 @@ type Product = {
   sizes?: string;
   stock?: number;
   variants: string;
+  customFields?: Record<string, any>;
 };
+
+let cachedSchemas: any[] | null = null;
 
 export default function ProductDetail() {
   const params = useParams();
@@ -32,6 +35,7 @@ export default function ProductDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
+  const [schemas, setSchemas] = useState<any[]>(cachedSchemas || []);
 
   // Magnifier
   const [isHovering, setIsHovering] = useState(false);
@@ -39,23 +43,33 @@ export default function ProductDetail() {
   const [zoomedPosition, setZoomedPosition] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProductAndSchema = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/products/${productID}`);
-        if (!res.ok) throw new Error('Product not found');
-        const data = await res.json();
+        const [prodRes, schemaRes] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'}/api/products/${productID}`),
+          !cachedSchemas ? fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'}/api/schema`) : Promise.resolve(null)
+        ]);
+
+        if (!prodRes.ok) throw new Error('Product not found');
+        const data = await prodRes.json();
         setProduct(data);
         
         if (data.colors) setSelectedColor(data.colors.split(',')[0].trim());
         if (data.sizes) setSelectedSize(data.sizes.split(',')[0].trim());
+
+        if (schemaRes && schemaRes.ok) {
+          const sData = await schemaRes.json();
+          cachedSchemas = sData;
+          setSchemas(sData);
+        }
       } catch (error) {
-        console.error('Failed to fetch product', error);
+        console.error('Failed to fetch product data', error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (productID) fetchProduct();
+    if (productID) fetchProductAndSchema();
   }, [productID]);
 
   const isOutOfStock = product?.stock !== undefined && product.stock <= 0;
@@ -113,7 +127,12 @@ export default function ProductDetail() {
   const sizesList = product.sizes ? product.sizes.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+    <div className="relative min-h-screen">
+      {/* Background Orbs */}
+      <div className="fixed top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-pink-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-10">
       <Link href={`/products?category=${product.category}`} className="flex items-center gap-2 mb-8 text-base-content/70 hover:text-white">
         <ArrowLeft size={20} /> Back to {product.category === 'Men' ? 'VantaBlack' : product.category === 'Women' ? 'VantaRozze' : 'Shop'}
       </Link>
@@ -143,7 +162,7 @@ export default function ProductDetail() {
               src={product.images[currentImageIndex] || 'https://placehold.co/600x600/png?text=No+Image+Available'}
               alt={product.title}
               fill
-              className="object-contain p-8"
+              className="object-cover"
               onError={(e) => (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/png?text=Image+Not+Found'}
             />
 
@@ -221,6 +240,20 @@ export default function ProductDetail() {
             <p className="text-base-content/80 leading-relaxed">{product.description}</p>
           </div>
 
+          {/* Dynamic Custom Fields */}
+          {schemas.filter(s => s.showOnPage).map(s => {
+            const val = product.customFields?.[s.name];
+            if (!val) return null;
+            return (
+              <div key={s._id} className="bg-zinc-900/50 backdrop-blur-md border border-zinc-800 p-5 rounded-2xl shadow-sm">
+                <h3 className="font-semibold text-zinc-500 text-sm mb-1.5 uppercase tracking-wide">{s.label}</h3>
+                {s.type === 'boolean' && <p className="text-white font-bold text-lg">Yes</p>}
+                {s.type === 'imageLink' && <Image src={val} alt={s.label} width={200} height={200} className="rounded-xl object-cover border border-zinc-700 mt-2" />}
+                {s.type !== 'boolean' && s.type !== 'imageLink' && <p className="text-white font-bold text-lg">{val}</p>}
+              </div>
+            );
+          })}
+
           {/* Colors & Sizes */}
           {colorsList.length > 0 && (
             <div>
@@ -230,8 +263,8 @@ export default function ProductDetail() {
                   <button
                     key={i}
                     onClick={() => setSelectedColor(color)}
-                    className={`px-5 py-2.5 text-sm font-medium rounded-full border transition-all ${
-                      selectedColor === color ? 'bg-primary text-white border-primary' : 'border-zinc-700 hover:border-primary hover:bg-zinc-900'
+                    className={`px-5 py-2.5 text-sm font-bold rounded-2xl border transition-all ${
+                      selectedColor === color ? 'bg-pink-600 text-white border-pink-500 shadow-[0_0_15px_rgba(219,39,119,0.5)]' : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-pink-500 hover:text-white'
                     }`}
                   >
                     {color}
@@ -249,8 +282,8 @@ export default function ProductDetail() {
                   <button
                     key={i}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-6 py-2.5 text-sm font-medium rounded-full border transition-all min-w-13 text-center ${
-                      selectedSize === size ? 'bg-primary text-white border-primary' : 'border-zinc-700 hover:border-primary hover:bg-zinc-900'
+                    className={`px-6 py-2.5 text-sm font-bold rounded-2xl border transition-all min-w-13 text-center ${
+                      selectedSize === size ? 'bg-purple-600 text-white border-purple-500 shadow-[0_0_15px_rgba(147,51,234,0.5)]' : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-purple-500 hover:text-white'
                     }`}
                   >
                     {size}
@@ -264,23 +297,24 @@ export default function ProductDetail() {
             {!isOutOfStock && (
               <button
                 onClick={handleAddToCart}
-                className="btn btn-primary btn-block text-lg h-16"
+                className="w-full flex justify-center items-center gap-2 bg-white text-black hover:bg-zinc-200 focus:ring-4 focus:ring-zinc-500 font-black rounded-2xl text-lg px-5 py-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={(colorsList.length > 0 && !selectedColor) || (sizesList.length > 0 && !selectedSize)}
               >
-                <ShoppingCart size={26} /> Add to Cart
+                <ShoppingCart size={24} /> Add to Cart
               </button>
             )}
 
             <button
               onClick={handleWhatsApp}
-              className="btn btn-success btn-block text-lg h-16 flex items-center justify-center gap-2 text-white"
+              className="w-full flex justify-center items-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-black rounded-2xl text-lg px-5 py-4 transition-all shadow-[0_0_20px_rgba(37,211,102,0.3)] hover:shadow-[0_0_30px_rgba(37,211,102,0.5)]"
             >
-              <MessageCircle size={26} />
+              <MessageCircle size={24} />
               {isOutOfStock ? "Ask When Back in Stock" : "Order on WhatsApp"}
             </button>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

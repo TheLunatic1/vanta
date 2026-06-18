@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, User } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from './CartContext';
 
@@ -37,6 +37,10 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-6">
+            <Link href="/profile" className="flex items-center gap-2 hover:text-pink-400 transition-colors">
+              <User size={26} />
+            </Link>
+
             <Link href="/cart" className="relative flex items-center gap-2 hover:text-pink-400 transition-colors">
               <ShoppingCart size={26} />
               {cart.length > 0 && (
