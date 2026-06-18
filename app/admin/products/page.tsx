@@ -5,7 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import { Plus, Edit, Trash2 } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api` : "http://localhost:5001/api";
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001"}/api`;
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<any[]>([]);

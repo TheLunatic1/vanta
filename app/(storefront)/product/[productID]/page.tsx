@@ -46,8 +46,8 @@ export default function ProductDetail() {
     const fetchProductAndSchema = async () => {
       try {
         const [prodRes, schemaRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'}/api/products/${productID}`),
-          !cachedSchemas ? fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'}/api/schema`) : Promise.resolve(null)
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001"}`}/api/products/${productID}`),
+          !cachedSchemas ? fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001"}`}/api/schema`) : Promise.resolve(null)
         ]);
 
         if (!prodRes.ok) throw new Error('Product not found');

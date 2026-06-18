@@ -31,7 +31,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   useEffect(() => {
     if (!cachedSchemas) {
-      axios.get('http://localhost:5001/api/schema').then(res => {
+      axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001"}/api/schema`).then(res => {
         cachedSchemas = res.data;
         setSchemas(res.data);
       }).catch(err => console.error(err));

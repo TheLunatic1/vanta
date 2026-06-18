@@ -19,7 +19,7 @@ export default function StorefrontLogin() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5001/api/users/login", { email, password });
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001"}/api/users/login`, { email, password });
       localStorage.setItem("userToken", res.data.token);
       router.push("/profile");
     } catch (err: any) {

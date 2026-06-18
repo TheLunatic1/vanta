@@ -6,7 +6,7 @@ import axios from "axios";
 import { User, Package, Star, LogOut, Award, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 
-const API_URL = "http://localhost:5001/api";
+const API_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001"}/api`;
 
 export default function UserProfile() {
   const router = useRouter();
