@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Award } from "lucide-react";
 
-const API_URL = "http://localhost:5001/api";
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api` : "http://localhost:5001/api";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<any[]>([]);

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Package, Users, DollarSign, ShoppingCart, FileCode2 } from "lucide-react";
 import axios from "axios";
 
-const API_URL = "http://localhost:5001/api";
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api` : "http://localhost:5001/api";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({

@@ -18,7 +18,8 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5001/api/users/login", { email, password });
+      const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001";
+      const res = await axios.post(`${baseURL}/api/users/login`, { email, password });
       if (res.data.role?.toLowerCase() !== "admin") {
         setError("Unauthorized: Admin access required.");
         return;
