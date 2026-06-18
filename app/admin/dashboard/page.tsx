@@ -21,10 +21,6 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem("adminToken");
-        if (!token) {
-          window.location.href = "/admin/login";
-          return;
-        }
         const res = await axios.get(`${API_URL}/admin/stats`, {
           headers: { Authorization: `Bearer ${token}` }
         });
