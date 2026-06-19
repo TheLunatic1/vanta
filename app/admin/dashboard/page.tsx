@@ -14,6 +14,7 @@ export default function AdminDashboard() {
     totalRevenue: 0,
     men: 0,
     women: 0,
+    others: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -90,6 +91,15 @@ export default function AdminDashboard() {
               </div>
               <div className="w-full bg-zinc-950 rounded-full h-3">
                 <div className="bg-gradient-to-r from-blue-500 to-emerald-500 h-3 rounded-full" style={{ width: `${Math.max(5, (stats.women / (stats.totalProducts || 1)) * 100)}%` }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="font-bold text-zinc-300">Others</span>
+                <span className="font-bold text-zinc-500">{stats.others} products</span>
+              </div>
+              <div className="w-full bg-zinc-950 rounded-full h-3">
+                <div className="bg-gradient-to-r from-emerald-500 to-yellow-500 h-3 rounded-full" style={{ width: `${Math.max(5, (stats.others / (stats.totalProducts || 1)) * 100)}%` }}></div>
               </div>
             </div>
           </div>

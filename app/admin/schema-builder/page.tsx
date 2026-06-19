@@ -18,6 +18,9 @@ export default function SchemaBuilder() {
     showOnPage: true,
   });
 
+  const [trustSignals, setTrustSignals] = useState<any[]>([]);
+  const [newSignal, setNewSignal] = useState({ text: '', icon: 'Check' });
+
   const fetchSchemas = async () => {
     try {
       const res = await axios.get(`${API_URL}/schema`);
@@ -29,8 +32,20 @@ export default function SchemaBuilder() {
     }
   };
 
+  const fetchSettings = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/settings`);
+      if (res.data && res.data.trustSignals) {
+        setTrustSignals(res.data.trustSignals);
+      }
+    } catch (error) {
+      console.error("Failed to load settings", error);
+    }
+  };
+
   useEffect(() => {
     fetchSchemas();
+    fetchSettings();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,6 +71,35 @@ export default function SchemaBuilder() {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchSchemas();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleAddSignal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("adminToken");
+      const updatedSignals = [...trustSignals, newSignal];
+      await axios.put(`${API_URL}/settings`, { trustSignals: updatedSignals }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTrustSignals(updatedSignals);
+      setNewSignal({ text: '', icon: 'Check' });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to add signal.");
+    }
+  };
+
+  const handleDeleteSignal = async (idx: number) => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      const updatedSignals = trustSignals.filter((_, i) => i !== idx);
+      await axios.put(`${API_URL}/settings`, { trustSignals: updatedSignals }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setTrustSignals(updatedSignals);
     } catch (error) {
       console.error(error);
     }
@@ -310,6 +354,86 @@ export default function SchemaBuilder() {
                   </div>
                 </div>
 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Trust Signals Settings */}
+      <div className="pt-12 space-y-6 border-t border-zinc-800/50 mt-12">
+        <div>
+          <h2 className="text-3xl font-bold flex items-center gap-3">Homepage Trust Signals</h2>
+          <p className="text-base-content/60">Manage the trust signals displayed on the homepage (e.g., Free Shipping).</p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="w-full lg:w-1/2 space-y-6">
+            <div className="bg-zinc-900/50 backdrop-blur-2xl border border-zinc-800/80 rounded-3xl shadow-xl">
+              <div className="card-body">
+                <h3 className="card-title text-xl mb-4 border-b border-base-200 pb-2"><Plus size={20}/> Add Trust Signal</h3>
+                
+                <form onSubmit={handleAddSignal} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-zinc-300 ml-1">Text</label>
+                    <input type="text" placeholder="e.g. FREE SHIPPING OVER ৳3000" className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" 
+                      value={newSignal.text} onChange={e => setNewSignal({...newSignal, text: e.target.value})} required />
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-zinc-300 ml-1">Icon (Lucide Icon Name)</label>
+                      <a href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer" className="text-xs text-pink-400 hover:text-pink-300 hover:underline flex items-center gap-1">
+                        Find Icons
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                      </a>
+                    </div>
+                    <input type="text" placeholder="e.g. Truck, ShieldCheck, Star" className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" 
+                      value={newSignal.icon} onChange={e => setNewSignal({...newSignal, icon: e.target.value})} required />
+                    <p className="text-xs text-zinc-500 ml-1 mt-1">Use exact component names from lucide-react</p>
+                  </div>
+                  
+                  <button type="submit" className="w-full flex justify-center items-center gap-2 bg-white text-black hover:bg-zinc-200 focus:ring-4 focus:ring-zinc-500 font-bold rounded-2xl text-lg px-5 py-4 transition-all mt-6">Add Signal</button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full lg:w-1/2">
+             <div className="bg-zinc-900/50 backdrop-blur-2xl border border-zinc-800/80 rounded-3xl shadow-xl">
+              <div className="p-8">
+                 <h3 className="text-xl font-bold text-white mb-6 border-b border-zinc-800 pb-3 flex items-center gap-2">Active Trust Signals</h3>
+                 {trustSignals.length === 0 ? (
+                   <div className="text-center py-6 text-zinc-500 font-medium">No signals added yet.</div>
+                 ) : (
+                   <div className="overflow-x-auto rounded-2xl border border-zinc-800">
+                     <table className="w-full text-left text-sm text-zinc-400">
+                       <thead className="text-xs text-zinc-300 uppercase bg-zinc-950/50 border-b border-zinc-800">
+                         <tr>
+                           <th className="px-6 py-4">Text</th>
+                           <th className="px-6 py-4">Icon Name</th>
+                           <th className="px-6 py-4 text-right">Actions</th>
+                         </tr>
+                       </thead>
+                       <tbody>
+                         {trustSignals.map((s, idx) => (
+                           <tr key={idx} className={`${idx !== trustSignals.length - 1 ? 'border-b border-zinc-800' : ''} bg-zinc-900/30 hover:bg-zinc-800/50 transition-colors`}>
+                             <td className="px-6 py-4">
+                               <div className="font-bold text-white text-base">{s.text}</div>
+                             </td>
+                             <td className="px-6 py-4">
+                               <span className="px-3 py-1 rounded-full text-xs font-semibold border border-zinc-700 bg-zinc-800 text-zinc-300">{s.icon}</span>
+                             </td>
+                             <td className="px-6 py-4 text-right">
+                               <button onClick={() => handleDeleteSignal(idx)} className="p-2 rounded-xl text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-colors">
+                                 <Trash2 size={18}/>
+                               </button>
+                             </td>
+                           </tr>
+                         ))}
+                       </tbody>
+                     </table>
+                   </div>
+                 )}
               </div>
             </div>
           </div>

@@ -17,8 +17,13 @@ export default function NewProduct() {
     title: "",
     description: "",
     price: 0,
+    salePrice: 0,
     category: "Men",
+    subcategory: "",
     status: "Active",
+    stock: 0,
+    colors: "",
+    sizes: "",
     images: "", // comma separated
     customFields: {}
   });
@@ -98,9 +103,14 @@ export default function NewProduct() {
                   value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}></textarea>
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-zinc-300 ml-1">Price ($)</label>
+                <label className="text-sm font-medium text-zinc-300 ml-1">Regular Price ($)</label>
                 <input type="number" step="0.01" className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" required 
                   value={formData.price} onChange={e => setFormData({...formData, price: parseFloat(e.target.value)})} />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-zinc-300 ml-1">Sale Price ($)</label>
+                <input type="number" step="0.01" className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" 
+                  value={formData.salePrice} onChange={e => setFormData({...formData, salePrice: parseFloat(e.target.value)})} />
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-zinc-300 ml-1">Category</label>
@@ -110,6 +120,34 @@ export default function NewProduct() {
                   <option value="Women">Women</option>
                   <option value="Others">Others</option>
                 </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-zinc-300 ml-1">Subcategory</label>
+                <input type="text" className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" 
+                  value={formData.subcategory} onChange={e => setFormData({...formData, subcategory: e.target.value})} />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-zinc-300 ml-1">Stock</label>
+                <input type="number" className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" required 
+                  value={formData.stock} onChange={e => setFormData({...formData, stock: parseInt(e.target.value) || 0})} />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-zinc-300 ml-1">Status</label>
+                <select className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" required
+                  value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})}>
+                  <option value="Active">Active</option>
+                  <option value="Draft">Draft</option>
+                </select>
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-sm font-medium text-zinc-300 ml-1">Colors (Comma separated)</label>
+                <input type="text" className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" 
+                  value={formData.colors} onChange={e => setFormData({...formData, colors: e.target.value})} />
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-sm font-medium text-zinc-300 ml-1">Sizes (Comma separated)</label>
+                <input type="text" className="w-full bg-zinc-950/50 border border-zinc-800 text-white rounded-xl focus:border-pink-500 focus:ring-1 focus:ring-pink-500 p-3 outline-none transition-all" 
+                  value={formData.sizes} onChange={e => setFormData({...formData, sizes: e.target.value})} />
               </div>
               <div className="space-y-1.5 md:col-span-2">
                 <label className="text-sm font-medium text-zinc-300 ml-1">Images (Comma separated Imgbb URLs)</label>

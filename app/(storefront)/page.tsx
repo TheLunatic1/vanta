@@ -1,7 +1,23 @@
 import Link from 'next/link';
-import { ArrowRight, Truck, ShieldCheck, Sparkles } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
-export default function Home() {
+async function getSettings() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001"}/api/settings`, { cache: 'no-store' });
+    if (!res.ok) return null;
+    return res.json();
+  } catch (error) {
+    return null;
+  }
+}
+
+export default async function Home() {
+  const settings = await getSettings();
+  const trustSignals = settings?.trustSignals || [
+    { text: 'FREE SHIPPING OVER ৳3000', icon: 'Truck' },
+    { text: '15 DAYS EASY RETURN', icon: 'ShieldCheck' }
+  ];
   return (
     <div className="bg-black min-h-screen">
       {/* HERO SECTION - Hardcoded Background */}
@@ -50,18 +66,17 @@ export default function Home() {
 
           {/* Trust Signals */}
           <div className="flex flex-wrap justify-center gap-8 text-sm font-bold text-zinc-400 uppercase tracking-widest">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-zinc-900 border border-zinc-800">
-                <Truck size={18} className="text-white" />
-              </div>
-              Free Shipping Over ৳3000
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-full bg-zinc-900 border border-zinc-800">
-                <ShieldCheck size={18} className="text-white" />
-              </div>
-              15 Days Easy Return
-            </div>
+            {trustSignals.map((signal: any, idx: number) => {
+              const IconComponent = (LucideIcons as any)[signal.icon] || LucideIcons.Check;
+              return (
+                <div key={idx} className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-zinc-900 border border-zinc-800">
+                    <IconComponent size={18} className="text-white" />
+                  </div>
+                  {signal.text}
+                </div>
+              );
+            })}
           </div>
 
         </div>
