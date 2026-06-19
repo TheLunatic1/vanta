@@ -43,6 +43,7 @@ export default function UserProfile() {
 
   const handleLogout = () => {
     localStorage.removeItem("userToken");
+    localStorage.removeItem("adminToken");
     router.push("/login");
   };
 

@@ -25,6 +25,7 @@ export default function AdminLogin() {
         return;
       }
       localStorage.setItem("adminToken", res.data.token);
+      localStorage.setItem("userToken", res.data.token);
       router.push("/admin/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed. Please check your credentials.");

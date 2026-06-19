@@ -21,6 +21,9 @@ export default function StorefrontLogin() {
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5001"}/api/users/login`, { email, password });
       localStorage.setItem("userToken", res.data.token);
+      if (res.data.role?.toLowerCase() === "admin") {
+        localStorage.setItem("adminToken", res.data.token);
+      }
       router.push("/profile");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed. Please check your credentials.");
