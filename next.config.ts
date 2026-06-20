@@ -6,7 +6,6 @@ const nextConfig: NextConfig = {
 
   // ✅ Allow any image link (including Cloudinary)
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
